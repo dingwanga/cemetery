@@ -1,0 +1,79 @@
+@CHARSET "UTF-8";
+
+body {
+	background-image: url(../images/timg.jpg);
+	background-size:1550px 750px;
+	 background-repeat:no-repeat;
+	padding-left: 450px;
+    padding-top: 50px;
+    
+}
+
+img {
+	margin: 50px 50px;
+	width: 100%;
+	margin-bottom: 10px;
+}
+.first{
+	margin-left: -250px;
+}
+.second {
+	margin-left: 500px;
+	width: 200px;
+	text-align: center;
+	font-szie: 18px;
+	margin-bottom: 30px;
+}
+
+.tb {
+	width: 50%;
+	border-collapse: collapse;
+	margin-left: 350px;
+	font-szie: 18px;
+}
+
+.tb th {
+	background-color: #6EC2FD;
+	padding: 10px 50px;
+	border-bottom: solid 1px #8c8c8c;
+}
+
+.tb td {
+	/* background-color: #eeeeff; */
+	padding: 10px 0;
+	border-bottom: solid 1px #8c8c8c;
+	border-left: solid 1px #fff;
+}
+
+.red_star {
+	color: red;
+}
+
+.bt {
+	margin: 20px 410px;
+	width: 100%
+}
+
+.modifyPass {
+	
+	width:60%;
+	padding: 25px;
+	background-color: #eeeeff;
+	margin-top: 70px;
+}
+
+#msg {
+	width: 70%;
+	text-align: right;
+	padding-top: 10px;
+	color: red;
+}
+table tr td input{
+	width: 175px;
+    height:22.5px;
+}
+.submit,.calne{
+	width:100px;
+	height:28px;
+	/* margin-left: -50px;
+}

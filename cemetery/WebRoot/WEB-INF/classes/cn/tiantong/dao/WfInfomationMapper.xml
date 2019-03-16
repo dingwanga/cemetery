@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.WfInfomationDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="WfInfomation" id="WfInfomationList">
+      <id property="wfID" column="wfID"></id>
+      <result property="wfinfonum" column="WFINFONUM"></result>
+      <result property="sgdbh" column="sgdbh"></result>
+      <result property="wfksrq" column="wfksrq"></result>
+      <result property="wfjsrq" column="WFJSRQ"></result>
+      <result property="wfns" column="WFNS"></result>
+      <result property="glf" column="glf"></result>
+      <result property="wfhj" column="WFHJ"></result>
+      <result property="whskrq" column="WHSKRQ"></result>
+    </resultMap>
+   
+      <!-- 新增施工單時新增维护信息  -->
+	   <insert id="addWfInfomationForsgd" parameterType="WfInfomation">
+	       INSERT INTO wfinfomation (sgdbh,wfksrq,WFJSRQ,WFNS,glf,WFHJ,WHSKRQ)
+	        VALUES(#{sgdbh},#{wfksrq},#{wfjsrq},#{wfns},#{glf},#{wfhj},#{whskrq});
+	   </insert>
+      
+        <!--修改墓穴维护信息  where条件是否加AND WFINFONUM = '0' 需要测试一下 -->
+	    <update id="modifyWfInfomation" parameterType="WfInfomation">
+	        update wfinfomation 
+			<set>
+			   <if test="wfksrq != null">wfksrq = #{wfksrq},</if>
+			   <if test="wfjsrq != null">WFJSRQ = #{wfjsrq},</if>
+			   <if test="wfns != null">WFNS = #{wfns},</if>
+			   <if test="glf != null">glf = #{glf},</if>
+			   <if test="wfhj != null">WFHJ = #{wfhj},</if>
+			   <if test="whskrq != null">WHSKRQ = #{whskrq}</if>
+			</set> 
+			WHERE sgdbh = #{sgdbh}
+		</update>
+		<!-- 查询墓穴维护信息 -->
+	   <select id="findWfInfomation" resultMap="WfInfomationList">
+	      SELECT wfid,WFINFONUM,sgdbh,wfksrq,wfjsrq,wfns,glf,wfhj,whskrq FROM wfinfomation WHERE sgdbh = #{sgdbh}
+	   </select>
+	   <!--獲取續交次數 -->
+	   <select id="queryXJCS" parameterType="String" resultType="Integer">
+	   		SELECT MAX(WFINFONUM+1) AS XJCS FROM wfinfomation WHERE sgdbh = #{sgdbh}
+	   </select>
+	     <!-- 新增维护费续交信息  -->
+	   <insert id="addWfInfomation" parameterType="WfInfomation">
+	       INSERT INTO wfinfomation (sgdbh,wfksrq,WFJSRQ,WFNS,glf,WFHJ,WHSKRQ,WFINFONUM)
+	        VALUES(#{sgdbh},#{wfksrq},#{wfjsrq},#{wfns},#{glf},#{wfhj},#{whskrq},#{wfinfonum});
+	   </insert>
+	   <!--修改最后一次续交的墓穴维护信息  -->
+	    <update id="modifyWfInfoMaxXJCS" parameterType="WfInfomation">
+	       UPDATE wfinfomation 
+	       <set>
+			   <if test="wfksrq != null">wfksrq = #{wfksrq},</if>
+			   <if test="wfjsrq != null">WFJSRQ = #{wfjsrq},</if>
+			   <if test="wfns != null">WFNS = #{wfns},</if>
+			   <if test="glf != null">glf = #{glf},</if>
+			   <if test="wfhj != null">WFHJ = #{wfhj},</if>
+			   <if test="whskrq != null">WHSKRQ = #{whskrq}</if>
+			</set> 
+			WHERE wfinfonum = (SELECT wfnumMax FROM(
+			SELECT MAX(wfinfonum) wfnumMax FROM wfinfomation WHERE sgdbh=#{sgdbh}) AS temp) 
+			AND sgdbh=#{sgdbh};
+		</update>
+		<!-- 根据施工单编号维护信息中维护信息 -->
+		<delete id="delWfinfomation" parameterType="String">
+	       delete from wfinfomation where sgdbh = #{sgdbh};
+	    </delete>
+</mapper>

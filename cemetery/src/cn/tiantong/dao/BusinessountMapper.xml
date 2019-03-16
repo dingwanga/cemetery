@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.BusinessCountDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="BusinessCount" id="BusinessCountList">
+     <result property="jzy" column="jzy"></result>
+     <result property="user" column="users"></result>
+     <result property="mqmc" column="mqmc"></result>
+     <result property="mxlb" column="mxlb"></result>
+     <result property="mxmc" column="mxmc"></result>
+     <result property="mdf" column="mdf"></result>
+     <result property="mdf1" column="mdf1"></result>
+     <result property="mdf2" column="mdf2"></result>
+     <result property="mdf3" column="mdf3"></result>
+     <result property="mdf4" column="mdf4"></result>
+     <result property="qmje" column="qmje"></result>
+     <result property="jfje" column="jfje"></result>
+     <result property="bjje" column="bjje"></result>
+   </resultMap>
+   
+    <!--业务信息统计 -->
+       <select id="getBusinessInfo" resultMap="BusinessCountList" parameterType="java.util.HashMap">
+           SELECT JZY,USERS,MQMC,SUM(MXLB) AS mxlb,COUNT(MXMC) AS mxmc,SUM(MDF) AS mdf,SUM(MDF1) AS mdf1,SUM(MDF2) AS mdf2,SUM(MDF3) AS mdf3,SUM(MDF4) AS mdf4,SUM(QMJE) AS qmje,SUM(JFJE) AS jfje,SUM(BJJE) AS bjje 
+            FROM 
+			(SELECT u.JZY AS jzy,u.USER AS users,M.MQMCID AS mqmc,m.MXLB AS mxlb,m.MXMC AS mxmc,q.MDF AS mdf,q.MDF1 AS mdf1,
+			q.MDF2 AS mdf2,q.MDF3 AS mdf3,q.MDF4 AS mdf4,m.QMJE AS qmje,s.JFJE AS jfje,s.BJJE AS bjje,m.DMRQ AS dmrq,s.JZSKRQ AS jzskrq,
+			s.BJRQ AS bjrq FROM sgd AS s,muxueNo AS m,users AS u,muquNo AS q WHERE s.SGDBH = m.SGDBHID AND s.USERID = u.ID AND m.MQMCID = q.MQMC
+			AND m.DMRQ  BETWEEN #{syrqStart} AND #{syrqEnd} 
+			  UNION ALL
+			 SELECT u.JZY AS jzy,u.USER AS users,M.MQMCID AS mqmc,m.MXLB AS mxlb,m.MXMC AS mxmc,q.MDF AS mdf,q.MDF1 AS mdf1,
+			q.MDF2 AS mdf2,q.MDF3 AS mdf3,q.MDF4 AS mdf4,m.QMJE AS qmje,s.JFJE AS jfje,s.BJJE AS bjje,m.DMRQ AS dmrq,s.JZSKRQ AS jzskrq,
+			s.BJRQ AS bjrq FROM sgd AS s,muxueNo AS m,users AS u,muquNo AS q WHERE s.SGDBH = m.SGDBHID AND s.USERID = u.ID AND m.MQMCID = q.MQMC
+			AND s.JZSKRQ BETWEEN #{syrqStart} AND #{syrqEnd}
+			 UNION ALL
+			 SELECT u.JZY AS jzy,u.USER AS users,M.MQMCID AS mqmc,m.MXLB AS mxlb,m.MXMC AS mxmc,q.MDF AS mdf,q.MDF1 AS mdf1,
+			q.MDF2 AS mdf2,q.MDF3 AS mdf3,q.MDF4 AS mdf4,m.QMJE AS qmje,s.JFJE AS jfje,s.BJJE AS bjje,m.DMRQ AS dmrq,s.JZSKRQ AS jzskrq,
+			s.BJRQ AS bjrq FROM sgd AS s,muxueNo AS m,users AS u,muquNo AS q WHERE s.SGDBH = m.SGDBHID AND s.USERID = u.ID AND m.MQMCID = q.MQMC
+			AND s.BJJE BETWEEN #{syrqStart} AND #{syrqEnd}
+			)AS jstl GROUP BY USERS,MQMC
+			
+       </select>
+     
+</mapper>

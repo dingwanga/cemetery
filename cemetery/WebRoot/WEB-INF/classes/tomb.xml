@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- 海葬数据上报数据格式 -->
+<SFIREPORT>
+       <ORGINFO>
+             <UNITCODE>单位编码</UNITCODE>
+       </ORGINFO>
+       <BUSBATCH type="array">
+        <!-- 多条业务传入多个BUSINFO标签 -->
+              <BUSINFO>
+                     <BUSNO>业务编号</BUSNO>
+                     <TOMBINFO>
+                       <TOMBCREDNO>墓穴证编号</TOMBCREDNO>
+                       <BURYTYPE>葬式</BURYTYPE>
+                       <TOMBNO>墓穴编号</TOMBNO>
+                       <TOMBAREA>墓穴面积</TOMBAREA>
+                       <FUREAREA>净墓面积</FUREAREA>
+                       <GREENAREA>绿化面积</GREENAREA>
+                       <GRAVENO>墓穴穴数</GRAVENO>
+                       <TOMBPRICE>墓穴价格</TOMBPRICE>
+                     </TOMBINFO>
+                      <DEADINFOS type="array">
+                         <DEADINFO>
+                                <NAME>使用人姓名</NAME>
+                                <SEX>使用人性别 附件代码值</SEX>
+                                <AGE>使用人年龄</AGE>
+                                <CREDTYPE>身份证件类型 附件代码值</CREDTYPE>
+                                <CREDNO>身份证件编号</CREDNO>
+                                <RELATION>与认购人关系</RELATION>
+                                <BIRTHDATE>出生日期</BIRTHDATE>
+                                <TOMBTYPE>墓穴类型</TOMBTYPE>
+                                <DEADDATE>死亡日期</DEADDATE>
+                                <BURYDATE>落葬日期</BURYDATE>
+                                <FIRENO>遗体火化证明编号</FIRENO>
+                                <SOURCEPROVINCE>来源省份</SOURCEPROVINCE>
+                                <SOURCECITY>来源城市</SOURCECITY>
+                                <SOURCEBROGH>来源市区</SOURCEBROGH>
+                                <ADDRESSFULL>详细地址</ADDRESSFULL>          
+                             </DEADINFO>    
+                             <DEADINFO>多个使用人信息…</DEADINFO>
+                      </DEADINFOS>
+                      <LINKINFO>
+                             <NAME>认购人姓名</NAME>
+                             <CREDTYPE>证件类型 附件代码值</CREDTYPE>
+                             <CREDNO>证件编号 附件代码值</CREDNO>
+                             <TELPHONE>联系方式</TELPHONE>
+                             <DEALDATE>经办日期</DEALDATE>
+                             <ADDRESSFULL>认购人地址</ADDRESSFULL>
+                      </LINKINFO>
+                      <MAINTSFEE type="array">
+                         <MAINTFEE>
+                            <MAINTYEAR>维护费年限</MAINTYEAR>
+                            <STARTDATE>开始日期</STARTDATE>
+                            <ENDDATE>结束日期</ENDDATE>
+                            <MAINTFEE>维护费费用</MAINTFEE>
+                         </MAINTFEE>
+                      </MAINTSFEE> 
+              </BUSINFO>
+       </BUSBATCH>
+</SFIREPORT>

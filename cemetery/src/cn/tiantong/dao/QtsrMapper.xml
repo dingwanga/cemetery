@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.QtsrDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Qtsr" id="QtsrList">
+      <id property="id" column="ID"></id>
+     <result property="qtjfrq" column="QTJFRQ"></result>
+     <result property="xm1" column="XM1"></result>
+     <result property="je1" column="JE1"></result>
+      <result property="xm2" column="XM2"></result>
+     <result property="je2" column="JE2"></result>
+      <result property="xm3" column="XM3"></result>
+     <result property="je3" column="JE3"></result>
+      <result property="xm4" column="XM4"></result>
+     <result property="je4" column="JE4"></result>
+      <result property="xm5" column="XM5"></result>
+     <result property="je5" column="JE5"></result>
+      <result property="xm6" column="XM6"></result>
+     <result property="je6" column="JE6"></result>
+      <result property="xm7" column="XM7"></result>
+     <result property="je7" column="JE7"></result>
+      <result property="xm8" column="XM8"></result>
+     <result property="je8" column="JE8"></result>
+      <result property="qtsrhj" column="QTSRHJ"></result>
+   </resultMap>
+   
+  
+   
+   
+   <!--查询所有其他收入总记录数-->
+    <select id="getTotal" resultType="int">
+       SELECT COUNT(id) AS COUNT FROM qtsr
+   </select> 
+   
+   
+    <!--分页查询其他收入  -->
+        <select id="findByPage" resultMap="QtsrList">
+           select ID,QTJFRQ,XM1,JE1,XM2,JE2,XM3,JE3,XM4,JE4,XM5,JE5,XM6,JE6,XM7,JE7,XM8,JE8, QTSRHJ from qtsr
+              LIMIT #{start},#{pageSize}
+        </select>
+        
+    <!--查询所有其他收入  -->
+        <select id="findAll" resultMap="QtsrList">
+           select ID,QTJFRQ,XM1,JE1,XM2,JE2,XM3,JE3,XM4,JE4,XM5,JE5,XM6,JE6,XM7,JE7,XM8,JE8, QTSRHJ from qtsr
+        </select>     
+        
+        
+   <!--其他收入新增 -->
+   <insert id="addQtsr" parameterType="Qtsr">
+       insert into qtsr(QTJFRQ,XM1,JE1,XM2,JE2,XM3,JE3,XM4,JE4,XM5,JE5,XM6,JE6,XM7,JE7,XM8,JE8,QTSRHJ)VALUES
+       (#{qtjfrq},#{xm1},#{je1},#{xm2},#{je2},#{xm3},#{je3},#{xm4},#{je4},#{xm5},#{je5},#{xm6},#{je6},#{xm7},
+       #{je7},#{xm8},#{je8},#{qtsrhj})
+   </insert> 
+   
+  <!-- 根据id查询修改信息 -->
+   <select id="findById" resultType="Qtsr">
+           select ID,QTJFRQ,XM1,JE1,XM2,JE2,XM3,JE3,XM4,JE4,XM5,JE5,XM6,JE6,XM7,JE7,XM8,JE8, QTSRHJ from qtsr where ID = #{id}
+    </select> 
+   
+   <!--修改其他收入  -->
+    <update id="updateQtsr" parameterType="Qtsr">
+		update qtsr
+		<set>
+		   <if test="qtjfrq != null">QTJFRQ = #{qtjfrq},</if>
+		  <if test="xm1 != null and xm1 !=''">XM1 = #{xm1},</if>
+		  <if test="je1 != null">JE1 = #{je1},</if>
+		  <if test="xm2 != null and xm1 !=''">XM2 = #{xm2},</if>
+		  <if test="je2 != null">JE2 = #{je2},</if>
+		   <if test="xm3 != null and xm3 !=''">XM3 = #{xm3},</if>
+		  <if test="je3 != null">JE3 = #{je3},</if>
+		   <if test="xm4 != null and xm4 !=''">XM4 = #{xm4},</if>
+		  <if test="je4 != null">JE4 = #{je4},</if>
+		   <if test="xm5 != null and xm5 !=''">XM5 = #{xm5},</if>
+		  <if test="je5 != null">JE5 = #{je5},</if>
+		   <if test="xm6 != null and xm6 !=''">XM6 = #{xm6},</if>
+		  <if test="je6 != null">JE6 = #{je6},</if>
+		   <if test="xm7 != null and xm7 !=''">XM7 = #{xm7},</if>
+		  <if test="je7 != null">JE7 = #{je7},</if>
+		   <if test="xm8 != null and xm8 !=''">XM8 = #{xm8},</if>
+		  <if test="je8 != null">JE8 = #{je8},</if>
+		  <if test="qtsrhj != null">QTSRHJ = #{qtsrhj}</if>
+		</set>
+		where ID = #{id} 
+	</update>
+	 
+ 
+   
+   <!-- 删除其他收入用户-->
+   <delete id="delQtsr" parameterType="int">
+       delete from qtsr where ID = #{id}
+   </delete> 
+   
+   
+   
+</mapper>

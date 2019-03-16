@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.SymxDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Symx" id="SymxList">
+     <result property="mqmc" column="mqmc"></result>
+     <result property="syqkSum" column="syqkSum"></result>
+     <result property="sy1qk" column="sy1qk"></result>
+     <result property="sy2qk" column="sy2qk"></result>
+     <result property="sy3qk" column="sy3qk"></result>
+     <result property="sy4qk" column="sy4qk"></result>
+     <result property="mxlb" column="mxlb"></result>
+     <result property="ssje" column="ssje"></result>
+    
+   </resultMap>
+      <!--获得使用明细记录 -->
+       <select id="getSymxCount" resultMap="SymxList" parameterType="java.util.HashMap">
+           SELECT mqmc,COUNT(1) AS syqkSum,
+			 SUM(CASE WHEN sy1qk='寿'THEN 1 WHEN sy1qk='故'THEN 0 ELSE '' END) AS sy1qk,
+			 SUM(CASE WHEN sy2qk='寿'THEN 1 WHEN sy2qk='故'THEN 0 ELSE '' END) AS sy2qk,
+			 SUM(CASE WHEN sy3qk='寿'THEN 1 WHEN sy3qk='故'THEN 0 ELSE '' END) AS sy3qk,
+			 SUM(CASE WHEN sy4qk='寿'THEN 1 WHEN sy4qk='故'THEN 0 ELSE '' END) AS sy4qk,
+			 SUM(mxlb) mxlb ,SUM(ssje) ssje FROM
+			(SELECT m.mqmcid AS mqmc ,s.sy1qk AS sy1qk,s.sy2qk AS sy2qk,s.sy3qk AS sy3qk,s.sy4qk AS sy4qk,m.mxlb AS mxlb,s.ssje AS ssje,s.JZSKRQ AS JZSKRQ,s.zxblrq AS zxblrq
+			FROM sgd AS s,muxueNo AS m
+			WHERE m.sgdbhid = s.sgdbh AND s.JZSKRQ BETWEEN #{syrqStart} AND #{syrqEnd}
+			UNION
+			SELECT m.mqmcid AS mqmc ,s.sy1qk AS sy1qk,s.sy2qk AS sy2qk,s.sy3qk AS sy3qk,s.sy4qk AS sy4qk,m.mxlb AS mxlb,s.ssje AS ssje,s.JZSKRQ AS JZSKRQ,s.zxblrq AS zxblrq
+			FROM sgd AS s,muxueNo AS m
+			WHERE m.sgdbhid = s.sgdbh AND s.zxblrq BETWEEN #{syrqStart} AND #{syrqEnd}) AS jstl GROUP BY mqmc;
+       </select>
+ 
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.TombDecorationDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="TombDecoration" id="TombDecorationList">
+	     <id property="sgdbh" column="sgdbh"></id>
+	     <result property="cxmc" column="CXMC"></result>
+	     <result property="cxdj" column="CXDJ"></result>
+	     <result property="syrxm1" column="SYXM1"></result>
+	     <result property="syrxm2" column="SYXM2"></result>
+	     <result property="syrxm3" column="SYXM3"></result>
+	     <result property="syrxm4" column="SYXM4"></result>
+     </resultMap>
+   
+   
+   
+   <!--获得总记录数  -->
+   
+       <select id="getCount" resultType="int">
+         SELECT COUNT(1) AS COUNT FROM sgd
+          <where>
+         <if test="sgdbh != null and sgdbh != ''">SGDBH like '%${sgdbh}%'</if>
+         </where>
+       </select>
+       
+   <!--分页查询信息  -->
+        
+        <select id="findByPage" resultMap="TombDecorationList">
+               SELECT s.sgdbh,m.dmrq,s.lxrxm,s.lxrdh,s.lxrdz,m.mqmcId,m.mxmc,m.mxlb,s.syxm1,s.syxm2,s.syxm3,s.syxm4,zxblrq,
+				u.jzy,s.kzx,s.kzxdj,s.kzf,s.kks,s.kkdj,s.kkf,c.cxmc,s.cxgs,c.cxdj,s.cxf,
+				s.xiangmu1,s.jine1,s.xiangmu2,s.jine2,s.xiangmu3,s.jine3,s.xiangmu4,s.jine4,
+				s.xiangmu5,s.jine5,s.xiangmu6,s.jine6,s.mxjfhj FROM sgd AS s,muxueNo AS m,users AS u,cixiang AS c
+				WHERE s.sgdbh=m.SGDBHID AND s.userId = u.id AND s.CXID = c.ID AND s.sfzx='1'
+               <if test="sgdbh != null and sgdbh != ''">and SGDBH like '%${sgdbh}%'</if>
+               ORDER BY SGDBH DESC LIMIT #{start},#{pageSize}
+        </select>
+    
+        
+     <!--根据施工单编号查询墓穴装修信息  -->
+      <select id="findBySgdbhMuxueZhuangxiu" resultMap="TombDecorationList">
+        SELECT s.SGDBH,m.DMRQ,s.LXRXM,s.LXRDH,s.LXRDZ,s.LXRYB,m.MQMCID,m.MXMC,m.MXLB,s.SYXM1,s.SY1QK,s.SYXM2,s.SY2QK,s.SYXM3,s.SY3QK,s.SYXM4,s.SY4QK
+		FROM muxueno AS m,sgd AS s
+		WHERE m.SGDBHID = s.SGDBH AND s.SGDBH = #{sgdbh}
+      </select>  
+       <!--根据施工单编号查询墓穴装修信息_显示墓穴装修修改  -->
+      <select id="findMXZXModify" resultMap="TombDecorationList">
+           SELECT s.sgdbh,m.dmrq,s.lxrxm,s.lxrdh,s.lxrdz,m.mqmcId,m.mxmc,m.mxlb,s.syxm1,s.syxm2,s.syxm3,s.syxm4,sy1qk,sy2qk,sy3qk,sy4qk,zxblrq,
+				u.jzy,s.kzx,s.kzxdj,s.kzf,s.kks,s.kkdj,s.kkf,c.cxmc,s.cxgs,c.cxdj,s.cxf,
+				s.xiangmu1,s.jine1,s.xiangmu2,s.jine2,s.xiangmu3,s.jine3,s.xiangmu4,s.jine4,
+				s.xiangmu5,s.jine5,s.xiangmu6,s.jine6,s.mxjfhj FROM sgd AS s,muxueNo AS m,users AS u,cixiang AS c
+				WHERE s.sgdbh=m.SGDBHID AND s.userId = u.id AND s.CXID = c.ID
+              AND SGDBH = #{sgdbh}
+      </select>  
+      
+      
+   <!--墓穴装修新增修改  -->
+   <update id="updateMuxueZhuangxiu" parameterType="TombDecoration">
+         update sgd 
+		<set>
+		   <if test="zxblrq != null and zxblrq !=''">zxblrq = #{zxblrq},</if>
+		   <if test="userId != null">userid = #{userId},</if>
+		   <if test="kzx != null and kzx !=''">kzx = #{kzx},</if>
+		   <if test="kzxdj != null and kzxdj !=''">kzxdj = #{kzxdj},</if>
+		   <if test="kzf != null and kzf !=''">kzf = #{kzf},</if>
+		   <if test="kks != null and kks !=''">kks = #{kks},</if>
+		   <if test="kkdj != null and kkdj !=''">kkdj = #{kkdj},</if>
+		   <if test="kkf != null and kkf !=''">kkf = #{kkf},</if>
+		   <if test="cxId != null">cxid = #{cxId},</if>
+		   <if test="cxgs != null and cxgs !=''">cxgs = #{cxgs},</if>
+		   <if test="cxf != null and cxf !=''">cxf = #{cxf},</if>
+		   <if test="xiangmu1 != null and xiangmu1 !=''">xiangmu1 = #{xiangmu1},</if>
+		   <if test="jine1 != null and jine1 !=''">jine1 = #{jine1},</if>
+		   <if test="xiangmu2 != null and xiangmu2 !=''">xiangmu2 = #{xiangmu2},</if>
+		   <if test="jine2 != null and jine2 !=''">jine2 = #{jine2},</if>
+		   <if test="xiangmu3 != null and xiangmu3 !=''">xiangmu3 = #{xiangmu3},</if>
+		   <if test="jine3 != null and jine3 !=''">jine3 = #{jine3},</if>
+		   <if test="xiangmu4 != null and xiangmu4 !=''">xiangmu4 = #{xiangmu4},</if>
+		   <if test="jine4 != null and jine4 !=''">jine4 = #{jine4},</if>
+		   <if test="xiangmu5 != null and xiangmu5 !=''">xiangmu5 = #{xiangmu5},</if>
+		   <if test="jine5 != null and jine5 !=''">jine5 = #{jine5},</if>
+		   <if test="xiangmu6 != null and xiangmu6 !=''">xiangmu6 = #{xiangmu6},</if>
+		   <if test="jine6 != null and jine6 !=''">jine6 = #{jine6},</if>
+		   <if test="mxjfhj != null and mxjfhj !=''">mxjfhj = #{mxjfhj},</if>
+		   <if test="syrxm1 != null and syrxm1 !=''">syxm1 = #{syrxm1},</if>
+		   <if test="syrxm2 != null and syrxm2 !=''">syxm2 = #{syrxm2},</if>
+		   <if test="syrxm3 != null and syrxm3 !=''">syxm3 = #{syrxm3},</if>
+		   <if test="syrxm4 != null and syrxm4 !=''">syxm4 = #{syrxm4},</if>
+		   <if test="sy1qk != null and sy1qk !=''">sy1qk = #{sy1qk},</if>
+		   <if test="sy2qk != null and sy2qk !=''">sy2qk = #{sy2qk},</if>
+		   <if test="sy3qk != null and sy3qk !=''">sy3qk = #{sy3qk},</if>
+		   <if test="sy4qk != null and sy4qk !=''">sy4qk = #{sy4qk},</if>
+		    sfzx='1'
+		</set> 
+		   WHERE sgdbh = #{sgdbh}
+   </update>
+    <!-- 删除一条墓穴装修信息 -->
+    <update id="deleteMuxueZhuangxiu" parameterType="String">
+    	 update sgd 
+		<set>
+	  	  sfzx='0'
+		</set>
+		where sgdbh = #{sgdbh}
+    </update>
+</mapper>

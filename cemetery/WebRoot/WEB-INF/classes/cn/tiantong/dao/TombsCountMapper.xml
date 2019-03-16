@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.TombsCountDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="TombsCount" id="TombsCountList">
+     <result property="tombSysSum" column="ryqkSum"></result>
+     <result property="dingmuSum" column="dmpbSum"></result>
+     <result property="tombSum" column="mxgsSum"></result>
+    
+   </resultMap>
+      
+      <!-- 查询墓穴使用数 -->
+	 <select id="findRyqkCount" resultType="Integer" parameterType="java.util.HashMap">
+            SELECT SUM(ryqk) ryqkSum FROM 
+		(SELECT COUNT(ryqk) AS ryqk FROM muxueNo 
+		   WHERE ryqk= 1 AND dmrq BETWEEN #{syrqStart} AND #{syrqEnd} 
+		   UNION
+		 SELECT COUNT(ryqk) AS ryqk FROM muxueNo,sgd 
+		   WHERE sgdbhId = sgdbh AND dmpb=0 AND ryqk=1 AND jzskrq BETWEEN #{syrqStart} AND #{syrqEnd})
+		   AS cxtj;
+       </select>
+        <!-- 查询已定墓数 -->
+       <select id="findDmpbCount" resultType="Integer" parameterType="java.util.HashMap">
+          SELECT COUNT(dmpb) AS dmpbSum FROM muxueNo WHERE dmpb=1 AND dmrq BETWEEN #{syrqStart} AND #{syrqEnd};
+       </select>
+        <!-- 查询墓穴总个数 -->
+      <select id="findMxgs" resultType="Integer">
+         SELECT SUM(mxgs) AS mxgsSum FROM muquNo;
+      </select>
+     
+</mapper>

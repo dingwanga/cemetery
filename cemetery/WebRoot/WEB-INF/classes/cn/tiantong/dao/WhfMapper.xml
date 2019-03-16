@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.WhfDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Whf" id="WhfList">
+      <id property="sgdbh" column="SGDBH"></id>
+      <result property="mxmc" column="MXMC"></result>
+      <result property="dmrq" column="DMRQ"></result>
+      <result property="lxrxm" column="LXRXM"></result>
+      <result property="lxrdh" column="LXRDH"></result>
+      <result property="lxrdz" column="LXRDZ"></result>
+      <result property="lxryb" column="LXRYB"></result>
+      <result property="ssmc" column="SSMC"></result>
+      <result property="qxmc" column="QXMC"></result>
+      <result property="mxlb" column="MXLB"></result>
+      <result property="mqmcId" column="MQMCID"></result>
+      <result property="wfns" column="WFNS"></result>
+      <result property="wfksrq" column="WFKSRQ"></result>
+      <result property="wfjsrq" column="WFJSRQ"></result>
+      <result property="wfdj" column="WFDJ"></result>
+      <result property="wfhj" column="WFHJ"></result>
+      <result property="syrxm1" column="SYXM1"></result>
+	  <result property="syrxm2" column="SYXM2"></result>
+	  <result property="syrxm3" column="SYXM3"></result>
+	  <result property="syrxm4" column="SYXM4"></result>
+    </resultMap>
+   
+    <!--获得总记录数-->
+       <select id="getCount" resultType="Integer" parameterType="java.util.HashMap">
+         SELECT count(*)
+           FROM muxueNo AS mx,muquNo as mq ,sgd as s WHERE mx.MQMCID = mq.MQMC AND s.sgdbh = mx.sgdbhId
+             <if test="sgdbh != null and sgdbh != ''">AND s.sgdbh like '%${sgdbh}%'</if>
+             <if test="mqmcId != null and mqmcId != ''">AND mx.MQMCID like '%${mqmcId}%'</if>
+	         <if test="mxmc != null and mxmc != ''">AND mx.MXMC like '%${mxmc}%'</if>
+	         <if test="lxrxm != null and lxrxm !=''">AND s.LXRXM = #{lxrxm}</if>
+		     <if test="whskrqEnd != null and whskrqEnd != ''">AND s.WHSKRQ &lt;= #{whskrqEnd}</if>
+		     <if test="whskrqStart != null and whskrqStart != ''">AND s.WHSKRQ &gt;= #{whskrqStart}</if>
+		    
+       </select>  
+       
+   <!--分页查询信息-->
+        <select id="findByPage" resultMap="WhfList" parameterType="java.util.HashMap">
+           SELECT s.SGDBH,mx.MXMC,mx.DMRQ,s.LXRXM,s.LXRDH,s.LXRDZ,s.LXRYB,mx.MQMCID,a.SSMC,a.QXMC,mx.MXLB,
+           s.WFKSRQ,s.WFJSRQ,s.WFNS,s.WFHJ,s.WHSKRQ,mq.glf,mq.glf1,mq.glf2,mq.glf3,mq.glf4
+           FROM muxueNo AS mx,muquNo as mq ,sgd as s,address as a 
+           WHERE mx.MQMCID = mq.MQMC AND s.sgdbh = mx.sgdbhId AND a.id = s.LZQXID
+             <if test="sgdbh != null and sgdbh != ''">AND s.sgdbh like '%${sgdbh}%'</if>
+             <if test="mqmcId != null and mqmcId != ''">AND mx.MQMCID like '%${mqmcId}%'</if>
+	         <if test="mxmc != null and mxmc != ''">AND mx.MXMC like '%${mxmc}%'</if>
+	         <if test="lxrxm != null and lxrxm !=''">AND s.LXRXM = #{lxrxm}</if>
+		     <if test="whskrqEnd != null and whskrqEnd != ''">AND s.WHSKRQ &lt;= #{whskrqEnd}</if>
+		     <if test="whskrqStart != null and whskrqStart != ''">AND s.WHSKRQ &gt;= #{whskrqStart}</if>
+		      AND wfksrq is not null
+              LIMIT #{start},#{pageSize}
+        </select>  
+        
+       
+       <!--根据施工单编号查询维护费信息  -->
+      <select id="findWhfDetailBySgdbh" resultMap="WhfList">
+        SELECT s.SGDBH,mx.DMRQ,s.LXRXM,s.LXRDH,s.LXRDZ,s.LXRYB,a.SSMC,a.QXMC,mx.MQMCID,mx.MXMC,
+        mx.MXLB,s.SYXM1,s.SY1QK,s.SYXM2,s.SY2QK,s.SYXM3,s.SY3QK,s.SYXM4,s.SY4QK,mq.glf,mq.glf1,
+        mq.glf2,mq.glf3,mq.glf4
+		FROM muxueno AS mx,sgd AS s,address AS a,muquNo AS mq
+		WHERE mx.SGDBHID = s.SGDBH AND s.LZQXID = a.id AND mq.mqmc = mx.mqmcId AND s.SGDBH = #{sgdbh}
+      </select> 
+      
+        <!--根据施工单编号查询维护费列表信息  -->
+      <select id="findBySgdbh" resultMap="WhfList">
+        SELECT s.SGDBH,s.WFKSRQ,s.WFJSRQ,s.WFNS,mq.glf,mq.glf1,mq.glf2,mq.glf3,mq.glf4,s.WFHJ,s.WHSKRQ
+		FROM muxueno AS mx,sgd AS s,muquNo AS mq
+		WHERE mx.SGDBHID = s.SGDBH AND mq.mqmc = mx.mqmcId AND s.SGDBH = #{sgdbh}
+      </select> 
+      
+      <!-- 定墓新增 --> 
+        <insert id="addWhf" parameterType="Whf">
+             insert into sgd(WFKSRQ,WFNS,WFJSRQ,WFHJ,WHSKRQ) values(#{wfksrq},#{wfns},#{wfjsrq},
+             #{wfhj},#{whskrq})
+		
+        </insert> 
+       <!--根据施工单编号查询维护费修改界面  --> 
+       <select id="updateFindBySgdbh" resultMap="WhfList">
+        SELECT s.SGDBH,m.dmrq,s.whskrq, s.LXRXM, s.LXRDZ, s.LXRDH, s.LXRYB,a.ssmc,a.QXMC,m.MQMCID, 
+        m.MXMC,m.MXLB,s.WFKSRQ, s.WFJSRQ, s.WFNS,q.glf, q.glf1, q.glf2, q.glf3, q.glf4,s.WFHJ
+		FROM sgd AS s, muxueNo AS m ,address AS a,muquNo AS q 
+	    WHERE s.SGDBH = m.SGDBHID AND s.LZQXID = a.id AND m.MQMCID = q.MQMC AND s.SGDBH = #{sgdbh}
+      </select> 
+     
+      <!--维护费修改  -->
+       <update id="updateWhf" parameterType="Whf">
+		update sgd 
+		<set>
+		  <if test="wfksrq != null">WFKSRQ = #{wfksrq},</if>
+		  <if test="wfns != null">WFNS = #{wfns},</if>
+		  <if test="wfjsrq != null">WFJSRQ = #{wfjsrq},</if>
+		  <if test="wfhj != null">WFHJ = #{wfhj},</if>
+		  <if test="whskrq != null">WHSKRQ = #{whskrq}</if>
+		</set> 
+		WHERE SGDBH = #{sgdbh}
+	</update>
+	
+	
+	  <!--维护费删除  -->
+       <update id="updateAndDelWhf" parameterType="String">
+		update sgd set WFKSRQ = null,WFNS = null,WFJSRQ = null,
+		WHERE SGDBH = #{sgdbh}
+	</update>
+</mapper>

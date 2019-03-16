@@ -1,0 +1,14 @@
+html,body{margin:0;padding:0;width:100%;height:100%;background:#ededed;} 
+
+#main{width:100%;height:100%;border:1px solid #ccc;} 
+
+#tab_header>span{display:inline-block;height:30px;line-height:30px;text-align:center;width:80px;cursor:pointer;} 
+
+#tab_header>span.selected{background:#ff00ff;color:#ffffff;} 
+
+#tab_body>ul{display:none;} 
+
+#tab_body>ul.shown{display:block; padding: 15px;}
+#tab_body>ul.shown li{ list-style-type:none;}
+#tab_body>ul.shown li p button{float: right;margin-right: 200px;margin-bottom: 10px;}
+

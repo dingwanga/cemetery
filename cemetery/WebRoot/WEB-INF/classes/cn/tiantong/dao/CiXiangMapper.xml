@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.CiXiangDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="CiXiang" id="CiXiangList">
+	     <id property="id" column="ID"></id>
+	     <result property="cxmc" column="CXMC"></result>
+	     <result property="cxdj" column="CXDJ"></result>
+     </resultMap>
+   
+  
+    <!-- 查询所有 -->
+	   <select id="findAll" resultMap="CiXiangList">
+			select id,cxmc,cxdj from cixiang
+	   </select>
+   
+   <!--获得总记录数  -->
+       <select id="getCount" resultType="int">
+         SELECT COUNT(1) AS COUNT FROM cixiang;
+       </select>
+       
+   <!--分页查询信息  -->
+        <select id="findByPage" resultMap="CiXiangList">
+           select id,cxmc,cxdj from cixiang
+              LIMIT #{start},#{pageSize}
+        </select>
+        
+   <!--新增瓷像  -->
+  <insert id="addCiXiang" parameterType="CiXiang">
+       insert into cixiang (CXMC,CXDJ) values (#{cxmc},#{cxdj})
+   </insert> 
+   
+   <!-- 根据id查找瓷像信息 -->
+   <select id="findCiXiangById" resultType="CiXiang">
+		select id,CXMC,CXDJ from cixiang where ID = #{id}
+   </select>
+   
+   <!--修改瓷像  -->
+   <update id="updateCiXiang" parameterType="CiXiang">
+		update cixiang 
+		<set>
+		  <if test="cxmc!=null">CXMC = #{cxmc},</if>
+		  <if test="cxdj!=null">CXDJ = #{cxdj}</if>
+		</set> 
+		WHERE id = #{id}
+	</update>
+   
+   <!-- 删除瓷像 -->
+ <delete id="delCiXiang" parameterType="int">
+       delete from cixiang where id = #{id}
+  </delete>
+  
+  <!-- 根据瓷像名称查询瓷像id -->
+ <select id="findCxIdByCxmc" resultType="CiXiang">
+      select id from cixiang where cxmc = #{cxmc}
+  </select>
+  
+</mapper>

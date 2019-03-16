@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.ConstructionScheduleDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="ConstructionSchedule" id="ConstructionScheduleList">
+     <id property="sid" column="sid"></id>
+     <result property="sgdbh" column="sgdbh"></result>
+     <result property="sfwg" column="sfwg"></result>
+     <result property="sfszp" column="sfszp"></result>
+     <result property="szrq" column="szrq"></result>
+      <result property="syrxm1" column="SYXM1"></result>
+	  <result property="syrxm2" column="SYXM2"></result>
+	  <result property="syrxm3" column="SYXM3"></result>
+	  <result property="syrxm4" column="SYXM4"></result>
+   </resultMap>
+   
+   <!-- 查询施工进度页面显示 --> 
+    <select id="getSgdjdBySgdbh" resultMap="ConstructionScheduleList">
+         SELECT s1.SGDBH,m.MQMCID,m.MXMC,s1.lxrxm,s1.lxrdh,s1.lxrdz,s1.SYXM1, s1.SY1QK, s1.SYXM2, s1.SY2QK,
+       s1.SYXM3, s1.SY3QK, s1.SYXM4, s1.SY4QK,s2.QTDJ1,s2.QTDJ2,s2.QTDJ3,s2.QTDJ4,s2.SFGHZP,s2.SFSZP,s2.SFTCX,s2.sfwg,s2.SFZXWG,s2.sgdbh,s2.sid,s2.SZRQ,s2.ZPGHRQ,s2.BZ
+		FROM sgd AS s1,sgjd AS s2,muxueNo AS m
+		WHERE 
+		s1.SGDBH = s2.sgdbh
+		AND 
+		s1.SGDBH = m.SGDBHID
+		AND
+		s1.SGDBH=#{sgdbh}
+      </select> 
+      
+      <!-- 页面修改施工进度 -->
+      <update id="updateSgjdBySgdbh" parameterType="constructionSchedule">
+         UPDATE sgjd 
+		<set>
+		   <if test="sgdbh != null and sgdbh !=''">sgdbh = #{sgdbh},</if>
+		   <if test="sfwg != null and sfwg !=''">sfwg = #{sfwg},</if>
+		   <if test="sfszp != null and sfszp !=''">SFSZP = #{sfszp},</if>
+		   <if test="szrq != null and szrq !=''">SZRQ = #{szrq},</if>
+		   <if test="sfghzp != null and sfghzp !=''">SFGHZP = #{sfghzp},</if>
+		   <if test="zpghrq != null and zpghrq !=''">ZPGHRQ = #{zpghrq},</if>
+		   <if test="sftcx != null and sftcx !=''">SFTCX = #{sftcx},</if>
+		   <if test="sfzxwg != null and sfzxwg !=''">SFZXWG = #{sfzxwg},</if>
+		   <if test="qtdj1 != null and qtdj1 !=''">QTDJ1 = #{qtdj1},</if>
+		  <if test="qtdj2 != null and qtdj2 !=''">QTDJ2 = #{qtdj2},</if>
+		  <if test="qtdj3 != null and qtdj3 !=''">QTDJ3 = #{qtdj3},</if>
+		  <if test="qtdj4 != null and qtdj4 !=''">QTDJ4 = #{qtdj4},</if>
+		   <if test="bz != null and bz !=''">BZ = #{bz}</if>
+		</set> 
+		WHERE sgdbh= #{sgdbh};
+      </update>
+      <!-- 給施工单进度表添加编号 -->
+      <insert id="addSGDBHForSGJD" parameterType="String">
+         INSERT INTO sgjd(sgdbh)VALUES(#{sgdbh});
+     </insert> 
+</mapper>

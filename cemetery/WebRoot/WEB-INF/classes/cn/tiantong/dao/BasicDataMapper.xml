@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.BasicDataDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="BasicData" id="BasicDataList">
+	     <result property="discountAmount" column="discountAmount"></result>
+	     <result property="dateOfApproval" column="dateOfApproval"></result>
+	     <result property="taxPreferenceItems" column="taxPreferenceItems"></result>
+	     <result property="batchNumber" column="batchNumber"></result>
+	     <result property="approval" column="approval"></result>
+     </resultMap>
+   
+  
+    <!-- 查询所有 -->
+	   <select id="findAll" resultMap="BasicDataList">
+			SELECT discountAmount,dateOfApproval,taxPreferenceItems,batchNumber,approval,mqmcID,
+			MXMC FROM muxueNo
+	   </select>
+   
+   <!--获得总记录数  -->
+       <select id="getCount" resultType="int">
+         SELECT COUNT(*) AS COUNT FROM muxueNo where batchNumber is not null
+       </select>
+       
+   <!--分页查询信息  -->
+        <select id="findByPage" resultMap="BasicDataList">
+          SELECT discountAmount,dateOfApproval,taxPreferenceItems,batchNumber,approval,mqmcId,
+		  MXMC FROM muxueNo where batchNumber is not null
+          LIMIT #{start},#{pageSize}
+        </select>
+        
+   <!--修改基础数据 -->
+  <update id="addBasicData" parameterType="BasicData">
+  
+      update muxueNo 
+		<set>
+		  <if test="taxPreferenceItems!=null">taxPreferenceItems = #{taxPreferenceItems},</if>
+		  <if test="discountAmount!=null">discountAmount = #{discountAmount},</if>
+		   <if test="batchNumber!=null">batchNumber = #{batchNumber},</if>
+		    <if test="dateOfApproval!=null">dateOfApproval = #{dateOfApproval},</if>
+		     <if test="approval!=null">approval = #{approval}</if>
+		</set> 
+		WHERE mqmcId = #{mqmcId} and mxmc = #{mxmc}
+       
+   </update>
+   
+     
+   
+   <!-- 根据mqmcId 和mxmc 查找基础资料信息 -->
+   <select id="findBasicDataByMqmcIdAndMxmc" resultType="BasicData">
+		SELECT discountAmount,dateOfApproval,taxPreferenceItems,batchNumber,approval,mqmcId,
+		  MXMC FROM muxueNo WHERE mqmcId = #{mqmcId} and mxmc = #{mxmc}
+   </select>
+   
+   <!-- 基础资料信息删除 -->
+    <update id="DelBasicData" parameterType="String">
+		update muxueNo set discountAmount = null,dateOfApproval = null,taxPreferenceItems = null,
+		batchNumber = null,approval = null
+		WHERE mqmcId = #{mqmcId} and mxmc = #{mxmc}
+	</update>
+  
+</mapper>

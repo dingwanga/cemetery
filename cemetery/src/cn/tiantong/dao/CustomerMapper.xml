@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.CustomerDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Customer" id="CustomerList">
+      <id property="sgdbh" column="SGDBH"></id>
+      <result property="mxmc" column="MXMC"></result>
+      <result property="dmrq" column="DMRQ"></result>
+      <result property="lxrxm" column="LXRXM"></result>
+      <result property="lxrdh" column="LXRDH"></result>
+      <result property="lxrdz" column="LXRDZ"></result>
+      <result property="lxryb" column="LXRYB"></result>
+      <result property="ssmc" column="SSMC"></result>
+      <result property="qxmc" column="QXMC"></result>
+      <result property="mxlb" column="MXLB"></result>
+      <result property="mqmcId" column="MQMCID"></result>
+      
+      <result property="wfns" column="WFNS"></result>
+      <result property="wfksrq" column="WFKSRQ"></result>
+      <result property="wfjsrq" column="WFJSRQ"></result>
+      <result property="wfdj" column="WFDJ"></result>
+      <result property="wfhj" column="WFHJ"></result>
+      <result property="syxm1" column="SYXM1"></result>
+	  <result property="syxm2" column="SYXM2"></result>
+	  <result property="syxm3" column="SYXM3"></result>
+	  <result property="syxm4" column="SYXM4"></result>
+    </resultMap>
+   
+    <!--获得总记录数-->
+       <select id="getCount" resultType="int">
+         SELECT count(*),concat(s.SYXM1,s.SYXM2,s.SYXM3,s.SYXM4)
+           FROM muxueNo AS mx,muquNo as mq ,sgd as s WHERE mx.MQMCID = mq.MQMC AND s.sgdbh = mx.sgdbhId
+             <if test="sgdbh != null and sgdbh != ''">AND s.sgdbh like '%${sgdbh}%'</if>
+             <if test="mqmcId != null and mqmcId != ''">AND mx.MQMCID like '%${mqmcId}%'</if>
+	         <if test="mxmc != null and mxmc != ''">AND mx.MXMC like '%${mxmc}%'</if>
+	         <if test="lxrxm != null and lxrxm !=''">AND s.LXRXM = #{lxrxm}</if>
+		     <if test="syxm != null and syxm != ''">AND CONCAT(s.SYXM1,s.SYXM2,s.SYXM3,s.SYXM4) like '%${syxm}%'</if>
+		     <if test="lxrdh != null and lxrdh != ''">AND s.LXRDH = #{lxrdh}</if>
+		     <if test="lxrdz != null and lxrdz != ''">AND s.LXRDZ = #{lxrdz}</if>
+       </select>  
+       
+   <!--分页查询信息-->
+        <select id="findByPage" resultMap="CustomerList">
+           SELECT s.SGDBH,mx.MXMC,mx.DMRQ,s.LXRXM,s.LXRDH,s.LXRDZ,s.LXRYB,mx.MQMCID,a.SSMC,a.QXMC,mx.MXLB,
+           s.YYLZRQ,s.MZF,mq.MDF,mq.MDF1,mq.MDF2,mq.MDF3,mq.MDF4,mq.CLF,mq.CLF1,mq.CLF2,mq.CLF3,mq.CLF4,
+           mq.LZF,mq.LZF1,mq.LZF2,mq.LZF3,mq.LZF4,mq.LHF,mq.LHF1,mq.LHF2,mq.LHF3,mq.LHF4,s.FJF1,s.FJF2,s.FJF3,
+           s.FJF4,s.XJ,s.WFKSRQ,s.WFJSRQ,s.WFNS,s.WFHJ,mq.glf,mq.glf1,mq.glf2,mq.glf3,mq.glf4,s.SYXM1,s.SY1QK,
+           s.SYXM2,s.SY2QK,s.SYXM3,s.SY3QK,s.SYXM4,s.SY4QK,c.CXMC,c.CXDJ,s.cxgs,s.cxf,s.KKS,s.KKDJ,s.KKF,s.KZX,
+           s.KZXDJ,s.KZF,mx.QMJE,s.YSHJ,s.SSJE,s.QFHJ,s.BJJE,s.JFBS,concat(s.SYXM1,s.SYXM2,s.SYXM3,s.SYXM4)
+           FROM muxueNo AS mx,muquNo as mq ,sgd as s,address as a,cixiang as c
+           WHERE mx.MQMCID = mq.MQMC AND s.sgdbh = mx.sgdbhId AND a.id = s.LZQXID AND c.id = s.CXID
+             <if test="sgdbh != null and sgdbh != ''">AND s.sgdbh like '%${sgdbh}%'</if>
+             <if test="mqmcId != null and mqmcId != ''">AND mx.MQMCID like '%${mqmcId}%'</if>
+	         <if test="mxmc != null and mxmc != ''">AND mx.MXMC like '%${mxmc}%'</if>
+	         <if test="lxrxm != null and lxrxm !=''">AND s.LXRXM = #{lxrxm}</if>
+		     <if test="syxm != null and syxm != ''">AND CONCAT(s.SYXM1,s.SYXM2,s.SYXM3,s.SYXM4) like '%${syxm}%'</if>
+		    
+		     <if test="lxrdh != null and lxrdh != ''">AND s.LXRDH = #{lxrdh}</if>
+		     <if test="lxrdz != null and lxrdz != ''">AND s.LXRDZ = #{lxrdz}</if>
+             LIMIT #{start},#{pageSize}
+        </select>  
+        
+       
+        <!-- 查询所有 -->
+        <select id="findAllCustomer" resultMap="CustomerList" >
+               SELECT s.SGDBH,mx.MXMC,mx.DMRQ,s.LXRXM,s.LXRDH,s.LXRDZ,s.LXRYB,mx.MQMCID,a.SSMC,a.QXMC,mx.MXLB,
+	           s.YYLZRQ,s.MZF,mq.MDF,mq.MDF1,mq.MDF2,mq.MDF3,mq.MDF4,mq.CLF,mq.CLF1,mq.CLF2,mq.CLF3,mq.CLF4,
+	           mq.LZF,mq.LZF1,mq.LZF2,mq.LZF3,mq.LZF4,mq.LHF,mq.LHF1,mq.LHF2,mq.LHF3,mq.LHF4,s.FJF1,s.FJF2,s.FJF3,
+	           s.FJF4,s.XJ,s.WFKSRQ,s.WFJSRQ,s.WFNS,s.WFHJ,mq.glf,mq.glf1,mq.glf2,mq.glf3,mq.glf4,s.SYXM1,s.SY1QK,
+	           s.SYXM2,s.SY2QK,s.SYXM3,s.SY3QK,s.SYXM4,s.SY4QK,c.CXMC,c.CXDJ,s.cxgs,s.cxf,s.KKS,s.KKDJ,s.KKF,s.KZX,
+	           s.KZXDJ,s.KZF,mx.QMJE,s.YSHJ,s.SSJE,s.QFHJ,s.BJJE,s.JFBS
+	           FROM muxueNo AS mx,muquNo as mq ,sgd as s,address as a,cixiang as c
+	           WHERE mx.MQMCID = mq.MQMC AND s.sgdbh = mx.sgdbhId AND a.id = s.LZQXID AND c.id = s.CXID
+        </select>
+       
+</mapper>

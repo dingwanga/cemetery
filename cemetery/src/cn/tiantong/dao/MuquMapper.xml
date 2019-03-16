@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.MuquDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Muqu" id="MuquList">
+     <id property="id" column="ID"></id>
+     <result property="mqmc" column="MQMC"></result>
+     <result property="hs" column="HS"></result>
+     <result property="ls" column="LS"></result>
+     <result property="mxgs" column="MXGS"></result>
+   
+   </resultMap>
+   
+   
+   
+  
+   
+   <!-- 查询所有墓区名称 -->
+    <select id="findAllMuqu" resultMap="MuquList">
+		select MQMC from muquNo
+   </select>
+   
+   
+    <!--获得总记录数  -->
+       <select id="getCount" resultType="int">
+         SELECT COUNT(id) AS COUNT from muquNo <where>
+         <if test="mqmc != null and mqmc != ''">MQMC like '%${mqmc}%'</if>
+         </where>
+       </select>
+       
+   <!--分页查询信息  -->
+        <select id="findByPage" resultMap="MuquList">
+          SELECT DISTINCT id,MQMC,HS,`LS`,`MXGS`,`SYS`,`WYS`,`RXQK`,`MDF`,`MDF1`,`MDF2`,`MDF3`,`MDF4`,`CLF`,`CLF1`,`CLF2`,`CLF3`,`CLF4`,
+           `LZF`,`LZF1`,`LZF2`,`LZF3`,`LZF4`,`LHF`,`LHF1`,`LHF2`,`LHF3`,`LHF4`,`GLF`,`GLF1`,`GLF2`,`GLF3`,`GLF4`,`MXMJ`,`DLMJ`,
+           `MXJG`,`MXJG1`,`MXJG2`,`MXJG3`,`MXJG4`,`MXMJ1`,MXMJ2,MXMJ3,MXMJ4, DLMJ1,DLMJ2,DLMJ3,DLMJ4 FROM muquNo where 1=1
+             <if test="mqmc != null and mqmc != ''"> and MQMC like '%${mqmc}%'</if>
+              LIMIT #{start},#{pageSize}
+              
+        </select>
+        
+        
+     <!--查询所有  -->   
+       <select id="findAll" resultMap="MuquList">
+           SELECT DISTINCT id,MQMC,HS,`LS`,`MXGS`,`SYS`,`WYS`,`RXQK`,`MDF`,`MDF1`,`MDF2`,`MDF3`,`MDF4`,`CLF`,`CLF1`,`CLF2`,`CLF3`,`CLF4`,
+           `LZF`,`LZF1`,`LZF2`,`LZF3`,`LZF4`,`LHF`,`LHF1`,`LHF2`,`LHF3`,`LHF4`,`GLF`,`GLF1`,`GLF2`,`GLF3`,`GLF4`,
+           `MXMJ`,`DLMJ`,`MXLB`,`MXJG`,`MXJG1`,`MXJG2`,`MXJG3`,`MXJG4`,`MXMJ1`,MXMJ2,MXMJ3,MXMJ4, DLMJ1,DLMJ2,DLMJ3,DLMJ4 FROM muquNo,muxueNo 
+             
+        </select>
+        
+        
+    <!-- 查询所有墓区类别 
+        <select id="findAllLeiBie" resultMap="MuquList">
+        select distinct `MXLB` from muquNo ORDER BY MXLB
+        </select> -->
+         
+        
+        <!-- 墓区新增 -->
+        <insert id="addMuQu" parameterType="Muqu">
+            insert into muquNo (MQMC,HS,LS,MXGS,SYS,WYS,RXQK,MDF,MDF1,MDF2,MDF3,MDF4,CLF,CLF1,CLF2,CLF3,
+            CLF4,LZF,LZF1,LZF2,LZF3,LZF4,LHF,LHF1,LHF2,LHF3,LHF4,GLF,GLF1,GLF2,GLF3,GLF4,MXMJ,DLMJ,
+            MXJG,MXJG1,MXJG2,MXJG3,MXJG4,MXMJ1,MXMJ2,MXMJ3,MXMJ4,DLMJ1,DLMJ2,DLMJ3,DLMJ4) values (#{mqmc},#{hs},#{ls},#{mxgs},#{sys},#{wys},#{rxqk},#{mdf},
+            #{mdf1},#{mdf2},#{mdf3},#{mdf4},#{clf},#{clf1},#{clf2},#{clf3},#{clf4},#{lzf},#{lzf1},#{lzf2},
+            #{lzf3},#{lzf4},#{lhf},#{lhf1},#{lhf2},#{lhf3},#{lhf4},#{glf},#{glf1},#{glf2},#{glf3},#{glf4},
+            #{mxmj},#{dlmj},#{mxjg},#{mxjg1},#{mxjg2},#{mxjg3},#{mxjg4},#{mxmj1},#{mxmj2},#{mxmj3},#{mxmj4},#{dlmj1},#{dlmj2},#{dlmj3},#{dlmj4}) 
+        </insert>
+      
+      
+      <!-- 用Ajax验证墓区名是否存在 -->
+     <!--  <select id="checkMqmc" resultMap="MuquList">
+		        SELECT id,MQMC,HS,`LS`,`MXGS`,`SYS`,`WYS`,`RXQK`,`MDF`,`MDF1`,`MDF2`,`MDF3`,`MDF4`,`CLF`,
+		        `CLF1`,`CLF2`,`CLF3`,`CLF4`,`LZF`,`LZF1`,`LZF2`,`LZF3`,`LZF4`,`LHF`,`LHF1`,`LHF2`,`LHF3`,`LHF4`,`GLF`,
+		        `GLF1`,`GLF2`,`GLF3`,`GLF4`,`MXMJ`,`DLMJ`,`MXLB`,`MXJG`,`MXJG1`,`MXJG2`,`MXJG3`,`MXJG4`,`MXMJ1`,MXMJ2,
+		        MXMJ3,MXMJ4, DLMJ1,DLMJ2,DLMJ3,DLMJ4 FROM muquNo WHERE MQMC=#{mqmc} 
+    </select> -->
+      
+      
+      
+      
+      <!--根据墓区名称查询墓区信息-->
+      <select id="findMuquByMumc" resultType="Muqu">
+          select ID,MQMC,HS,`LS`,`MXGS`,`SYS`,`WYS`,`RXQK`,`MDF`,`MDF1`,`MDF2`,`MDF3`,`MDF4`,`CLF`,`CLF1`,`CLF2`,`CLF3`,`CLF4`,
+           `LZF`,`LZF1`,`LZF2`,`LZF3`,`LZF4`,`LHF`,`LHF1`,`LHF2`,`LHF3`,`LHF4`,`GLF`,`GLF1`,`GLF2`,`GLF3`,`GLF4`,`MXMJ`,`DLMJ`,
+           `MXJG`,`MXJG1`,`MXJG2`,`MXJG3`,`MXJG4`,MXMJ1,MXMJ2,MXMJ3,MXMJ4,DLMJ1,DLMJ2,DLMJ3,DLMJ4 from muquNo where MQMC = #{mqmc}
+      </select>
+      
+       <!--根据id查询墓区信息
+      <select id="findMuquByMuqu" resultType="Muqu">
+          select ID,MQMC,HS,`LS`,`MXGS`,`SYS`,`WYS`,`RXQK`,`MDF`,`MDF1`,`MDF2`,`MDF3`,`MDF4`,`CLF`,`CLF1`,`CLF2`,`CLF3`,`CLF4`,
+           `LZF`,`LZF1`,`LZF2`,`LZF3`,`LZF4`,`LHF`,`LHF1`,`LHF2`,`LHF3`,`LHF4`,`GLF`,`GLF1`,`GLF2`,`GLF3`,`GLF4`,`MXMJ`,`DLMJ`,
+           `MXJG`,`MXJG1`,`MXJG2`,`MXJG3`,`MXJG4`,MXMJ1,MXMJ2,MXMJ3,MXMJ4,DLMJ1,DLMJ2,DLMJ3,DLMJ4 from muquNo where MQMC = #{mqmc}
+      </select>-->
+      
+      <!--根据id查询墓区信息-->
+      <select id="findMuquById" resultType="Muqu">
+          select ID,MQMC,HS,`LS`,`MXGS`,`SYS`,`WYS`,`RXQK`,`MDF`,`MDF1`,`MDF2`,`MDF3`,`MDF4`,`CLF`,`CLF1`,`CLF2`,`CLF3`,`CLF4`,
+           `LZF`,`LZF1`,`LZF2`,`LZF3`,`LZF4`,`LHF`,`LHF1`,`LHF2`,`LHF3`,`LHF4`,`GLF`,`GLF1`,`GLF2`,`GLF3`,`GLF4`,`MXMJ`,`DLMJ`,
+           `MXJG`,`MXJG1`,`MXJG2`,`MXJG3`,`MXJG4`,MXMJ1,MXMJ2,MXMJ3,MXMJ4,DLMJ1,DLMJ2,DLMJ3,DLMJ4 from muquNo where ID = #{id}
+      </select>
+      
+   
+      
+      
+      <!--  墓区修改-->
+       <update id="updateMuQu" parameterType="Muqu">
+          update muquNo 
+		<set>
+		  <if test="mqmc != null">MQMC = #{mqmc},</if>
+		  <if test="hs != null">HS = #{hs},</if>
+		  <if test="ls != null">LS = #{ls},</if>
+		  <if test="mxgs != null">MXGS = #{mxgs},</if>
+		  <if test="sys != null">SYS = #{sys},</if>
+		  <if test="wys != null">WYS = #{wys},</if>
+		  <if test="rxqk != null">RXQK = #{rxqk},</if>
+		  <if test="mdf != null">MDF = #{mdf},</if>
+		  <if test="mdf1 != null">MDF1 = #{mdf1},</if>
+		  <if test="mdf2 != null">MDF2 = #{mdf2},</if>
+		  <if test="mdf3 != null">MDF3 = #{mdf3},</if>
+		  <if test="mdf4 != null">MDF4 = #{mdf4},</if>
+		  <if test="clf != null">CLF = #{clf},</if>
+		  <if test="clf1 != null">CLF1 = #{clf1},</if>
+		  <if test="clf2 != null">CLF2 = #{clf2},</if>
+		  <if test="clf3 != null">CLF3 = #{clf3},</if>
+		  <if test="clf4 != null">CLF4 = #{clf4},</if>
+		   <if test="lzf != null">LZF = #{lzf},</if>
+		  <if test="lzf1 != null">LZF1 = #{lzf1},</if>
+		  <if test="lzf2 != null">LZF2 = #{lzf2},</if>
+		  <if test="lzf3 != null">LZF3 = #{lzf3},</if>
+		   <if test="lzf4 != null">LZF4 = #{lzf4},</if>
+		  <if test="lhf != null">LHF = #{lhf},</if>
+		  <if test="lhf1 != null">LHF1 = #{lhf1},</if>
+		  <if test="lhf2 != null">LHF2 = #{lhf2},</if>
+		   <if test="lhf3 != null">LHF3 = #{lhf3},</if>
+		  <if test="lhf4 != null">LHF4 = #{lhf4},</if>
+		  <if test="glf != null">GLF = #{glf},</if>
+		  <if test="glf1 != null">GLF1 = #{glf1},</if>
+		   <if test="glf2 != null">GLF2 = #{glf2},</if>
+		  <if test="glf3 != null">GLF3 = #{glf3},</if>
+		  <if test="glf4 != null">GLF4 = #{glf4},</if>
+		   <if test="mxmj != null">MXMJ = #{mxmj},</if>
+		  <if test="dlmj != null">DLMJ = #{dlmj},</if>
+		  <!--  <if test="mxlb != null">MXLB = #{mxlb},</if> -->
+		  <if test="mxjg != null">MXJG = #{mxjg},</if>
+		  <if test="mxjg1 != null">MXJG1 = #{mxjg1},</if>
+		  <if test="mxjg2 != null">MXJG2 = #{mxjg2},</if>
+		  <if test="mxjg3 != null">MXJG3 = #{mxjg3},</if>
+		  <if test="mxjg4 != null">MXJG4 = #{mxjg4},</if>
+		   <if test="mxmj1 != null">MXMJ1 = #{mxmj1},</if>
+		  <if test="mxmj2 != null">MXMJ2 = #{mxmj2},</if>
+		  <if test="mxmj3 != null">MXMJ3 = #{mxmj3},</if>
+		  <if test="mxmj4 != null">MXMJ4 = #{mxmj4},</if>
+		   <if test="dlmj1 != null">DLMJ1 = #{dlmj1},</if>
+		  <if test="dlmj2 != null">DLMJ2 = #{dlmj2},</if>
+		  <if test="dlmj3 != null">DLMJ3 = #{dlmj3},</if>
+		  <if test="dlmj4 != null">DLMJ4 = #{dlmj4}</if>
+		</set> 
+		WHERE ID = #{id}
+       </update>
+       
+       <!--  墓区删除-->
+       <delete id="delMuqu" parameterType="int">
+           delete from muquNo where ID = #{id}
+       </delete>
+       
+</mapper>

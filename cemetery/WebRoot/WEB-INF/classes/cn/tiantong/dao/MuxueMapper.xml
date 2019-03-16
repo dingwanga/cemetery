@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.MuxueDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Muxue" id="MuxueList">
+     <id property="mxid" column="MXID"></id>
+     <result property="mxmc" column="MXMC"></result>
+     <result property="hh" column="HH"></result>
+     <result property="lh" column="LH"></result>
+     <result property="dmpb" column="DMPB"></result>
+    <result property="syrxm1" column="syxm1"></result>
+     <result property="syrxm2" column="syxm2"></result>
+     <result property="syrxm3" column="syxm3"></result>
+     <result property="syrxm4" column="syxm4"></result>
+   </resultMap>
+   
+   <!-- 查询所有墓穴名称 -->
+    <select id="findAllMuxue" resultMap="MuxueList">
+		select MXMC from muxueNo
+   </select>
+   
+   <!--查询墓区名称对应的所有墓穴名称  -->
+   <select id="findByMqmcId" resultType="Muxue">
+     SELECT mxmc FROM MUXUENO WHERE mqmcid = #{mqmcId};
+   </select>
+   
+    <!--查询墓区名称对应的未定墓的所有墓穴名称  -->
+   <select id="findByMqmcIdAndZeroOfDMPB" resultType="Muxue">
+     SELECT mxmc FROM MUXUENO WHERE DMPB <![CDATA[ <> ]]> '1' AND mqmcid = #{mqmcId};
+   </select>
+   
+   <!-- 查询墓区中所有cid=null 的墓穴 -->
+   <select id="findByMqmcIdAndConcessionList" resultType="Muxue">
+     SELECT mxmc FROM MUXUENO WHERE batchNumber IS null AND mqmcid = #{mqmcId}
+   </select>
+   
+    <!--查询墓区名称对应的已定墓的所有墓穴名称_添加施工单  -->
+   <select id="queryMxmcByMqmcAndDmpb" resultType="Muxue">
+     SELECT mxmc FROM MUXUENO WHERE DMPB = #{dmpb} AND mqmcid = #{mqmcId} AND sgdbhId IS NULL;
+   </select>
+   <!--查询墓区名称对应的已定墓的所有墓穴名称_修改施工单  -->
+   <select id="queryModifyMxmcByMqmcAndDmpb" resultType="Muxue">
+     SELECT mxmc FROM MUXUENO WHERE DMPB = #{dmpb} AND mqmcid = #{mqmcId} AND (sgdbhId IS NULL or sgdbhId=#{sgdbhId});
+   </select>
+   
+     <!-- 查询所有墓穴类别 -->
+        <select id="findAllLeiBie" resultMap="MuxueList">
+        select distinct `MXLB` from muxueNo ORDER BY MXLB
+        </select>
+   
+   
+    <!--获得总记录数 -->
+       <select id="getCount" resultType="int">
+         SELECT COUNT(MXID) AS COUNT from muxueNo 
+         <where>
+         <if test="mqmcId != null and mqmcId != ''">MQMCID like '%${mqmcId}%'</if>
+         <if test="mxmc != null and mxmc != ''">AND MXMC like '%${mxmc}%'</if>
+         <if test="ryqk != null">AND RYQK = #{ryqk}</if>
+	     <if test="dmpb != null">AND DMPB = #{dmpb}</if>
+         </where>
+       </select> 
+       
+       
+   <!--分页查询信息 -->
+        <select id="findByPage" resultMap="MuxueList">
+           SELECT MXID,MXMC,DMPB,HH,LH,SGDBHID,SYXM1,SYXM2,SYXM3,SYXM4,sy1qk,sy2qk,sy3qk,sy4qk,lxrxm,SQRXM,DMRQ,LXDH,MQMCID,
+           JZYID,LXDZ,BZ,QMJE,DMSKRQ,RYQK,MXLB FROM muxueNo,muquNo,sgd WHERE MQMCID = MQMC and sgdbhId = sgdbh
+           <if test="mqmcId != null and mqmcId != ''">AND MQMCID like '%${mqmcId}%'</if>
+           <if test="mxmc != null and mxmc != ''">AND MXMC like '%${mxmc}%'</if>
+	       <if test="ryqk != null">AND RYQK = #{ryqk}</if>
+	       <if test="dmpb !=null">AND DMPB = #{dmpb}</if>
+              LIMIT #{start},#{pageSize}
+        </select> 
+        
+        
+     <!--查询所有 -->   
+       <select id="findAll" resultMap="MuxueList">
+         SELECT MXID,MXMC,DMPB,HH,LH,SGDBHID,SYXM1,SYXM2,SYXM3,SYXM4,sy1qk,sy2qk,sy3qk,sy4qk,lxrxm,SQRXM,DMRQ,LXDH,MQMCID,
+           JZYID,LXDZ,BZ,QMJE,DMSKRQ,RYQK,MXLB FROM muxueNo,muquNo WHERE MQMCID = MQMC
+        </select> 
+        
+        <!--查询所有的使用情况  -->
+        <select id="findAllSy" resultMap="MuxueList">
+           select distinct RYQK from muxueNo
+        </select>
+        
+        
+        <!-- 查询所有定墓判别 -->
+        <select id="findAllDm" resultMap="MuxueList">
+        select distinct DMPB from muxueNo
+        </select>
+        
+        
+        <!-- 墓穴新增 -->
+        <insert id="addMuxue" parameterType="Muxue">
+            insert into muxueNo (HH,LH,MXMC,MXLB,MQMCID,DMPB) values (#{hh},#{lh},#{mxmc},#{mxlb},#{mqmcId},0) 
+        </insert>
+      
+      <!-- 根据id查询墓穴信息 -->
+      <select id="fingByMuxueId" resultType="Muxue">
+          SELECT MXID,HH,LH,MXMC,MXLB,MQMCID,SQRXM,LXDH,LXDZ FROM muxueNo WHERE mxid=#{mxid}
+      </select>
+      
+      <!-- 根据mqmc和mxmc查询墓穴信息 -->
+      <select id="findByMqAndMx" resultType="Muxue">
+          SELECT MXID,HH,LH,MXMC,MXLB,MQMCID FROM muxueNo WHERE 1=1
+           <if test="mqmcId != null">and mqmcId = #{mqmcId}</if>
+           <if test="mxmc != null">and mxmc = #{mxmc}</if>
+      </select>
+      
+      <!--  墓穴修改-->
+       <update id="updateMuxue" parameterType="Muxue">
+          update muxueNo 
+		<set>
+		   <if test="mxlb != null">MXLB = #{mxlb},</if>
+		  <if test="hh != null">HH = #{hh},</if>
+		  <if test="lh != null">LH = #{lh},</if>
+		  <if test="mxmc != null">MXMC = #{mxmc}</if>
+		</set> 
+		WHERE MXID = #{mxid}
+       </update>
+         <!-- 根据施工单编号修改墓穴信息-->
+      <!--  <update id="updateMuxueBysgdbhId" parameterType="Muxue">
+          update muxueNo 
+		<set>
+		  <if test="mqmcId != null">MQMCID = #{mqmcId},</if>
+		  <if test="mxmc != null">MXMC = #{mxmc},</if>
+		  <if test="dmpb != null">DMPB = #{dmpb}</if>
+		</set> 
+		WHERE SGDBHID = #{sgdbhId}
+       </update> -->
+        <!-- 修改sgdbh不为null-->
+       <update id="updateSGDBHForMuxue" parameterType="Muxue">
+          update muxueNo set SGDBHID = #{sgdbhId},RYQK = 1 WHERE MQMCID = #{mqmcId} and MXMC = #{mxmc}
+       </update>
+        <!-- 修改sgdbh为null-->
+       <update id="updateSGDBHIsNull" parameterType="Muxue">
+          update muxueNo set SGDBHID = null WHERE MQMCID = #{mqmcId} and MXMC = #{mxmc}
+       </update>
+       <!--  墓穴删除-->
+       <delete id="delMuxue" parameterType="int">
+           delete from muxueNo where MXID = #{mxid}
+       </delete>
+      
+      
+      
+      
+</mapper>

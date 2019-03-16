@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.UsersDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Users" id="UsersList">
+     <id property="id" column="id"></id>
+     <result property="user" column="user"></result>
+     <result property="pass" column="pass"></result>
+     <result property="right" column="right"></result>
+     <result property="jzy" column="jzy"></result>
+    
+   </resultMap>
+   
+   <!-- 登录 -->
+   <select id="login" resultMap="UsersList">
+       SELECT id,`user`,pass,`right`,jzy FROM users WHERE `user` = #{user} AND pass = #{pass}
+   </select>
+   
+   
+   <!--查询用户  -->
+    <select id="findUsersById" resultMap="UsersList">
+       SELECT id,`user`,pass,`right`,jzy FROM users WHERE id = #{id}
+   </select>
+   
+   
+   <!--新增用户  -->
+   <insert id="addUser" parameterType="Users">
+       insert into users(`user`,pass,`right`,jzy) values (#{user},#{pass},#{right},#{jzy})
+   </insert>
+   
+   <!-- 获取所有权限 -->
+    <select id="findAllRight" resultMap="UsersList">
+		select distinct `right` from users
+   </select>
+   
+   
+   <select id="findUsersByUsername" resultType="Users">
+		select id,`user`,pass,`right`,jzy from users where user=#{user}
+   </select>
+   
+   <!--修改密码  -->
+    <update id="modifyPasswordByUsername" parameterType="Users">
+		update users set pass=#{pass} where user=#{user}
+	</update>
+	 
+  <!-- 查询所有 -->
+   <select id="findAll" resultMap="UsersList">
+		select id,`user`,pass,`right`,jzy from users
+   </select>
+   
+   <!-- 删除用户 -->
+   <delete id="delUser" parameterType="int">
+       delete from users where id = #{id}
+   </delete>
+   
+   <!-- 查询所有结账员 -->
+   <select id="findAllJzy" resultMap="UsersList">
+      SELECT jzy,id FROM users WHERE `right` = '业务部门'
+   </select>
+   
+    <!-- 查询所有业务员 -->
+      <select id="findAllUser" resultMap="UsersList">
+           SELECT `user`,id FROM users WHERE `right` = '业务部门'
+       </select>
+       
+       <!-- 根据jzy查询用户id -->
+       <select id="findIdByJzy" resultType="Users">
+           SELECT id,`user`,pass,`right`,jzy FROM users WHERE jzy = #{jzy}
+       </select>
+   
+</mapper>

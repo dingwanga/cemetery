@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.DingmuDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Dingmu" id="DingmuList">
+      <id property="mxid" column="MXID"></id>
+      <result property="id" column="ID"></result>
+      <result property="mxmc" column="MXMC"></result>
+      <result property="dmpb" column="DMPB"></result>
+      <result property="dmrq" column="DMRQ"></result>
+      <result property="sqrxm" column="SQRXM"></result>
+      <result property="lxdh" column="LXDH"></result>
+      <result property="lxdz" column="LXDZ"></result>
+      <result property="bz" column="BZ"></result>
+      <result property="qmje" column="QMJE"></result>
+      <result property="jzyId" column="JZYID"></result>
+      <result property="dmskrq" column="DMSKRQ"></result>
+      <result property="mqmcId" column="MQMCID"></result>
+      <result property="jzy" column="JZY"></result>
+    </resultMap>
+   
+  
+   
+    <!--获得总记录数 -->
+       <select id="getCount" resultType="Integer" parameterType="java.util.HashMap">
+         SELECT count(*)
+           FROM muxueNo AS mx,muquNo as mq ,users as u WHERE mx.MQMCID = mq.MQMC AND mx.JZYID = u.id 
+             <if test="mqmcId != null and mqmcId != ''">AND mx.MQMCID like '%${mqmcId}%'</if>
+	         <if test="mxmc != null and mxmc != ''">AND mx.MXMC like '%${mxmc}%'</if>
+	         <if test="sqrxm != null and sqrxm !=''">AND mx.SQRXM = #{sqrxm}</if>
+		     <if test="dmrqEnd != null and dmrqEnd != ''">AND mx.DMRQ &lt;= #{dmrqEnd}</if>
+		     <if test="dmrqStart != null and dmrqStrat != ''">AND mx.DMRQ &gt;= #{dmrqStart}</if>
+		     AND mx.DMPB = 1 
+       </select> 
+       
+   <!--分页查询信息 -->
+        <select id="findByPage" resultMap="DingmuList" parameterType="java.util.HashMap">
+           SELECT mx.MXID,mx.MXMC,mx.DMPB,mx.DMRQ,mx.SQRXM,mx.LXDH,mx.LXDZ,mx.BZ,mx.QMJE,u.`USER`,mx.DMSKRQ,mx.MQMCID,mx.MXLB
+           FROM muxueNo AS mx,muquNo as mq ,users as u WHERE mx.MQMCID = mq.MQMC AND mx.JZYID = u.id 
+             <if test="mqmcId != null and mqmcId != ''">AND mx.MQMCID like '%${mqmcId}%'</if>
+	         <if test="mxmc != null and mxmc != ''">AND mx.MXMC like '%${mxmc}%'</if>
+	         <if test="sqrxm != null and sqrxm !=''">AND mx.SQRXM = #{sqrxm}</if>
+		     <if test="dmrqEnd != null and dmrqEnd != ''">AND mx.DMRQ &lt;= #{dmrqEnd}</if>
+		     <if test="dmrqStart != null and dmrqStart != ''">AND mx.DMRQ &gt;= #{dmrqStart}</if>
+		     AND mx.DMPB = 1 
+              ORDER BY DMRQ DESC LIMIT #{start},#{pageSize}
+        </select> 
+        
+       
+       
+      <!-- 定墓新增--> 
+        <update id="modifyDingmu" parameterType="Dingmu">
+             update muxueNo 
+		<set>
+		  <if test="sqrxm != null">SQRXM = #{sqrxm},</if>
+		  <if test="lxdh != null">LXDH = #{lxdh},</if>
+		  <if test="lxdz != null">LXDZ = #{lxdz},</if>
+		  <if test="qmje != null">QMJE = #{qmje},</if>
+		  <if test="dmrq != null">DMRQ = #{dmrq},</if>
+		  <if test="jzyId != null">JZYID = #{jzyId},</if>
+		  <if test="dmskrq != null">DMSKRQ = #{dmskrq},</if>
+		  <if test="bz != null">BZ = #{bz},</if>
+		  DMPB = 1,
+		  RYQK = 1
+		</set> 
+		   WHERE mqmcId=#{mqmcId} AND mxmc=#{mxmc} 
+        </update>  
+        
+      
+      <!-- 根据id查询定墓信息 -->
+      <select id="fingByDingmuId" resultType="Dingmu">
+          SELECT MXID,MQMCID,MXMC,MXLB,SQRXM, LXDH,LXDZ,QMJE,DMRQ,JZYID,DMSKRQ,BZ FROM muxueNo WHERE MXID = #{mxid}
+      </select>
+      
+      
+      <!-- 根据墓区墓穴名称确定墓穴类别 -->
+      <select id="findMxlbByMqmcIdAndMxmc" resultType="Dingmu">
+          SELECT mx.MQMCID,mx.mxmc,mx.MXLB,mx.taxPreferenceItems,mx.batchNumber,mx.discountAmount,
+                 mq.MXJG,mq.MXJG1,mq.MXJG2,mq.MXJG3,mq.MXJG4,mq.CLF,mq.CLF1,mq.CLF2,mq.CLF3,mq.CLF4,mq.LHF,mq.LHF1,
+          		 mq.LHF2,mq.LHF3,mq.LHF4,mq.LZF,mq.LZF1,mq.LZF2,mq.LZF3,mq.LZF4,mq.MDF,mq.MDF1,mq.MDF2,mq.MDF3,mq.MDF4,
+			     mq.GLF,mq.GLF1,mq.GLF2,mq.GLF3,mq.GLF4,mq.DLMJ,mq.DLMJ1,mq.DLMJ2,mq.DLMJ3,mq.DLMJ4,mq.MXMJ,mq.MXMJ1,mq.MXMJ2,mq.MXMJ3,mq.MXMJ4
+		  FROM muxueNo mx INNER JOIN muquNo mq
+		  ON mx.MQMCID = mq.MQMC
+		  WHERE mqmcId = #{mqmcId} AND mxmc=#{mxmc} 
+      </select>
+      
+      
+      <!--  根据定墓判别，墓区名称，墓穴名称查询定墓金额和日期-->
+      <select id="findDmjeAndDmrqByMqmcIdAndMxmcAndDmpb" resultType="Dingmu">
+          SELECT qmje,dmrq FROM muxueNo WHERE dmpb=1 AND mqmcId=#{mqmcId} AND mxmc=#{mxmc}
+      </select>
+      
+      
+      <!--  定墓修改-->
+       <update id="UpdateDingmu" parameterType="Dingmu">
+          update muxueNo 
+		<set>
+		   <if test="sqrxm != null">SQRXM = #{sqrxm},</if>
+		  <if test="lxdh != null">LXDH = #{lxdh},</if>
+		  <if test="lxdz != null">LXDZ = #{lxdz},</if>
+		  <if test="qmje != null">QMJE = #{qmje},</if>
+		  <if test="dmrq != null">DMRQ = #{dmrq},</if>
+		  <if test="jzyId != null">JZYID = #{jzyId},</if>
+		  <if test="dmskrq != null">DMSKRQ = #{dmskrq},</if>
+		  <if test="bz != null">BZ = #{bz}</if>
+		</set> 
+		WHERE MXID = #{mxid}
+       </update>
+       
+       
+       <!--  定墓删除-->
+       <update id="delDingmu" parameterType="Dingmu">
+            update muxueNo 
+		<set>
+		  SQRXM = #{sqrxm},
+		  LXDH = #{lxdh},
+		  LXDZ = #{lxdz},
+		  QMJE = #{qmje},
+		  DMRQ = #{dmrq},
+		  JZYID = #{jzyId},
+		  DMSKRQ = #{dmskrq},
+		  BZ = #{bz},
+		   DMPB = 0
+		</set> 
+		WHERE MXID = #{mxid}
+       </update>
+       
+</mapper>

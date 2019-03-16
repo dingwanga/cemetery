@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.ConstructionDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+      <resultMap type="Construction" id="ConstructionList">
+	     <id property="sgdbh" column="SGDBH"></id>
+	     <result property="cxf" column="CXF"></result>
+     </resultMap>
+   
+  
+   <!--获得总记录数  -->
+       <select id="getCount" resultType="int">
+         SELECT COUNT(1) AS COUNT FROM sgd
+         <where>
+         <if test="sgdbh != null and sgdbh != ''">SGDBH like '%${sgdbh}%'</if>
+         </where>
+       </select>
+       
+   <!--分页查询信息  -->
+      <select id="findByPage" resultMap="ConstructionList">
+         SELECT s.SGDBH, s.LXRXM, s.LXRDZ, s.LXRDH, s.LXRYB, s.YYLZRQ, m.MQMCID, m.MXMC, m.MXLB, s.MZF, s.XJ, s.KZX, s.KZXDJ, s.KZF, s.FJF1, s.FJF2,s.FJF3,
+	s.FJF4, s.WFKSRQ, s.WFJSRQ, s.WFNS, q.glf,q.glf1,q.glf2,q.glf3,q.glf4, s.WFHJ, s.YSHJ, m.DMRQ, s.YHJE, s.QFHJ, s.SYXM1, s.SY1QK, s.SYXM2, s.SY2QK,u.user,u.jzy,q.MDF,q.MDF1,q.MDF2,q.MDF3,q.MDF4,
+	q.CLF,q.CLF1,q.CLF2,q.CLF3,q.CLF4,q.LZF,q.LZF1,q.LZF2,q.LZF3,q.LZF4, q.LHF,q.LHF1,q.LHF2,q.LHF3,q.LHF4,
+	s.SYXM3, s.SY3QK, s.SYXM4, s.SY4QK, s.SZRQ, s.JZSKRQ, s.FJSKRQ,a.SSMC,a.QXMC FROM sgd AS s, muxueNo AS m ,address AS a,users AS u,muquNo AS q
+	WHERE s.SGDBH = m.SGDBHID AND s.LZQXID = a.id AND s.USERID = u.id AND m.MQMCID = q.MQMC 
+            <if test="sgdbh != null and sgdbh != ''">and SGDBH like '%${sgdbh}%'</if>
+           ORDER BY SGDBH DESC LIMIT #{start},#{pageSize}
+      </select>
+      
+       <!--根据施工单编号查询信息 -->
+     <select id="findBySgdbh" resultMap="ConstructionList">
+     	     SELECT s.SGDBH, s.LXRXM, s.LXRDZ, s.LXRDH, s.LXRYB, s.YYLZRQ,s.kks,s.kkdj,s.KKF,s.CXID,s.cxgs,s.cxf,s.bwxj,s.zkmc,s.zkbm,s.zkje,s.ssje,m.qmje,m.dmrq,s.jfje,
+			   m.MQMCID, m.MXMC, m.MXLB,m.DMPB, s.MZF, s.XJ, s.KZX, s.KZXDJ, s.KZF, s.FJF1, s.FJF2,s.FJF3, s.FJF4,s.fjf1mc,s.fjf2mc,s.fjf3mc,s.fjf4mc,s.fjfrq,s.whskrq,
+			   s.WFKSRQ, s.WFJSRQ, s.WFNS, q.glf, q.glf1, q.glf2, q.glf3, q.glf4, s.WFHJ, s.YSHJ, m.DMRQ, s.YHJE, s.QFHJ, s.SYXM1, s.SY1QK, s.SYXM2, s.SY2QK,
+			   s.bjrq,s.bjje,u.user,u.jzy,q.MDF,q.MDF1,q.MDF2,q.MDF3,q.MDF4, 
+			   q.CLF,q.CLF1,q.CLF2,q.CLF3,q.CLF4,q.LZF,q.LZF1,q.LZF2,q.LZF3,q.LZF4, q.LHF,q.LHF1,q.LHF2,q.LHF3,q.LHF4, q.mxmj,q.mxmj1,q.mxmj2,q.mxmj3,q.mxmj4,q.dlmj,q.dlmj1,q.dlmj2,
+			   q.dlmj3, q.dlmj4,s.SYXM3, s.SY3QK, s.SYXM4, s.SY4QK, s.SZRQ, s.JZSKRQ, s.FJSKRQ,a.ssmc,a.QXMC
+			    FROM sgd AS s, muxueNo AS m ,address AS a,users AS u,muquNo AS q 
+			    WHERE s.SGDBH = m.SGDBHID AND s.LZQXID = a.id AND s.USERID = u.id AND m.MQMCID = q.MQMC AND s.SGDBH = #{sgdbh}
+		   AND m.SGDBHID=#{sgdbh};
+      </select>
+        
+      <!-- 获取数据表中最大日期的施工单编号 -->
+      <select id="querySGDnO" resultType="java.lang.String">
+      	SELECT MAX(sgdbh) FROM SGD;
+      </select>
+      
+        
+   <!--新增施工单  -->
+ <insert id="addConstruction" parameterType="Construction">
+      INSERT INTO sgd(sgdbh,lzqxid,jzskrq,lxrxm,lxrdh,lxrdz,lxryb,mzf,fjf1mc,fjf2mc,fjf3mc,fjf4mc,fjf1,
+               fjf2,fjf3,fjf4,fjfrq,fjfpb,fjskrq,xj,yylzrq,wfksrq,wfns,wfjsrq,wfhj,whskrq,kzx,kzxdj,kzf,kks,
+               kkdj,kkf,cxgs,cxf,bwxj,yshj,userid,zkmc,zkbm,zkje,ssje,jfje,qfhj,syxm1,sy1qk,syxm2,
+               sy2qk,syxm3,sy3qk,syxm4,sy4qk,cxid) VALUES (#{sgdbh},#{lzqxId},#{jzskrq},#{lxrxm},#{lxrdh},#{lxrdz},#{lxryb},
+               #{mzf},#{fjf1mc},#{fjf2mc},#{fjf3mc},#{fjf4mc},#{fjf1},#{fjf2},#{fjf3},#{fjf4},#{fjfrq},#{fjfpb},
+               #{fjskrq},#{xj},#{yylzrq},#{wfksrq},#{wfns},#{wfjsrq},#{wfhj},#{whskrq},#{kzx},#{kzxdj},#{kzf},
+               #{kks},#{kkdj},#{kkf},#{cxgs},#{cxf},#{bwxj},#{yshj},#{userId},#{zkmc},#{zkbm},#{zkje},#{ssje},
+               #{jfje},#{qfhj},#{syxm1},#{sy1qk},#{syxm2},#{sy2qk},#{syxm3},#{sy3qk},#{syxm4},#{sy4qk},#{cxId});
+   </insert> 
+   <update id="updateConstruction" parameterType="Construction">
+		update SGD 
+		<set>
+		  <if test="jzskrq!=null">jzskrq = #{jzskrq},</if>
+		  <if test="userId!=null">userid = #{userId},</if>
+		  <if test="lxrxm!=null">lxrxm = #{lxrxm},</if>
+		  <if test="lxrdh!=null">lxrdh = #{lxrdh},</if>
+		  <if test="lzqxId!=null">lzqxid = #{lzqxId},</if>
+		  <if test="lxrdz!=null">lxrdz = #{lxrdz},</if>
+		  <if test="lxryb!=null">lxryb = #{lxryb},</if>
+		  <if test="mzf!=null">mzf = #{mzf},</if>
+		  <if test="fjf1mc!=null">fjf1mc = #{fjf1mc},</if>
+		  <if test="fjf2mc!=null">fjf2mc = #{fjf2mc},</if>
+		  <if test="fjf3mc!=null">fjf3mc = #{fjf3mc},</if>
+		  <if test="fjf4mc!=null">fjf4mc = #{fjf4mc},</if>
+		  <if test="fjf1!=null">fjf1 = #{fjf1},</if>
+		  <if test="fjf2!=null">fjf2 = #{fjf2},</if>
+		  <if test="fjf3!=null">fjf3 = #{fjf3},</if>
+		  <if test="fjf4!=null">fjf4 = #{fjf4},</if>
+		  
+		  <if test="fjfrq!=null">fjfrq = #{fjfrq},</if>
+		  <if test="fjfpb!=null">fjfpb = #{fjfpb},</if>
+		  <if test="fjskrq!=null">fjskrq = #{fjskrq},</if>
+		  <if test="xj!=null">xj = #{xj},</if>
+		  <if test="yylzrq!=null">yylzrq = #{yylzrq},</if>
+		  <if test="wfksrq!=null">wfksrq = #{wfksrq},</if>
+		  <if test="wfns!=null">wfns = #{wfns},</if>
+		  <if test="wfjsrq!=null">wfjsrq = #{wfjsrq},</if>
+		  <!-- <if test="wfdj!=null">wfdj = #{wfdj},</if> -->
+		  <if test="wfhj!=null">wfhj = #{wfhj},</if>
+		  <if test="whskrq!=null">whskrq = #{whskrq},</if>
+		  <if test="kzx!=null">kzx = #{kzx},</if>
+		  <if test="kzxdj!=null">kzxdj = #{kzxdj},</if>
+		  <if test="kzf!=null">kzf = #{kzf},</if>
+		  <if test="kks!=null">kks = #{kks},</if>
+		  
+		  <if test="kkdj!=null">kkdj = #{kkdj},</if>
+		  <if test="kkf!=null">kkf = #{kkf},</if>
+		  <if test="cxId!=null">cxid = #{cxId},</if>
+		  <if test="cxgs!=null">cxgs = #{cxgs},</if>
+		  <if test="cxf!=null">cxf = #{cxf},</if>
+		  <if test="bwxj!=null">bwxj = #{bwxj},</if>
+		  <if test="yshj!=null">yshj = #{yshj},</if>
+		  <if test="zkmc!=null">zkmc = #{zkmc},</if>
+		  <if test="zkbm!=null">zkbm = #{zkbm},</if>
+		  <if test="zkje!=null">zkje = #{zkje},</if>
+		  <if test="ssje!=null">ssje = #{ssje},</if>
+		  
+		  <if test="jfje!=null">jfje = #{jfje},</if>
+		  <if test="qfhj!=null">qfhj = #{qfhj},</if>
+		  <if test="syxm1!=null">syxm1 = #{syxm1},</if>
+		  <if test="sy1qk!=null">sy1qk = #{sy1qk},</if>
+		  <if test="syxm2!=null">syxm2 = #{syxm2},</if>
+		  <if test="sy2qk!=null">sy2qk = #{sy2qk},</if>
+		  <if test="syxm3!=null">syxm3 = #{syxm3},</if>
+		  <if test="sy3qk!=null">sy3qk = #{sy3qk},</if>
+		  <if test="syxm4!=null">syxm4 = #{syxm4},</if>
+		  <if test="sy4qk!=null">sy4qk = #{sy4qk},</if>
+		  <if test="bjrq!=null">bjrq = #{bjrq},</if>
+		  <if test="bjje!=null">bjje = #{bjje}</if>
+		</set> 
+		WHERE sgdbh = #{sgdbh}
+	</update>
+	<!-- 根据施工单编号删除一条施工单数据 -->
+	<delete id="delConstruction" parameterType="String">
+       delete from sgd where sgdbh = #{sgdbh}
+    </delete>
+    <!-- 更改施工单维护信息为最终数据 -->
+    <update id="updateConstructionWfInfo" parameterType="Construction">
+		update SGD 
+		<set>
+		  <if test="userId!=null">userid = #{userId},</if>
+		  <if test="wfksrq!=null">wfksrq = #{wfksrq},</if>
+		  <if test="wfns!=null">wfns = #{wfns},</if>
+		  <if test="wfjsrq!=null">wfjsrq = #{wfjsrq},</if>
+		  <!-- <if test="wfdj!=null">wfdj = #{wfdj},</if> -->
+		  <if test="wfhj!=null">wfhj = #{wfhj},</if>
+		  <if test="whskrq!=null">whskrq = #{whskrq}</if>
+		 
+		</set> 
+		WHERE sgdbh = #{sgdbh}
+	</update>
+	<!-- 根据施工单编号查询维护信息是否为空 -->
+      <select id="queryWFKSRQIsNull" resultType="Construction" parameterType="String">
+      	SELECT WFKSRQ,WFNS,WFJSRQ FROM sgd WHERE sgdbh = #{sgdbh};
+      </select>
+</mapper>

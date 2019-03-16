@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantong.dao.KzcxDao">
+    <!-- 当数据库中的字段信息与对象的属性不一致时需要通过resultMap来映射 -->
+     <resultMap type="Kzcx" id="KzcxList">
+     <result property="kzxSum" column="kzxSum"></result>
+     <result property="kzfSum" column="kzfSum"></result>
+     <result property="kksSum" column="kksSum"></result>
+     <result property="kkfSum" column="kkfSum"></result>
+     <result property="cxgsSum" column="cxgsSum"></result>
+     <result property="cxfSum" column="cxfSum"></result>
+   </resultMap>
+   
+    <!--获得总记录数 -->
+       <select id="getCount" resultType="Kzcx" parameterType="java.util.HashMap">
+         SELECT SUM(kzx) kzxSum,SUM(kzf) kzfSum ,SUM(kks) kksSum ,SUM(kkf) kkfSum ,SUM(cxgs) cxgsSum,SUM(cxf) cxfSum  
+         FROM (
+              SELECT SUM(kzx) kzx ,SUM(kzf) kzf,SUM(kks) kks ,SUM(kkf) kkf,SUM(cxgs) cxgs ,SUM(cxf) cxf
+              FROM sgd WHERE jzskrq BETWEEN #{jzskrqStart} AND  #{zxblrqEnd} 
+              UNION
+              SELECT SUM(kzx) kzx ,SUM(kzf) kzf,SUM(kks) kks ,SUM(kkf) kkf,SUM(cxgs) cxgs ,SUM(cxf) cxf
+              FROM sgd WHERE zxblrq BETWEEN #{jzskrqStart} AND  #{zxblrqEnd} ) AS cxtj
+       </select>
+     
+</mapper>
